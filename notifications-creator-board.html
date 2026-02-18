@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Emails & Push créateur – Board</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 16px; background: #f5f5f5; }
+    h1 { font-size: 1.25rem; margin: 0 0 8px 0; }
+    .load-zone { background: #fff; border: 2px dashed #ccc; border-radius: 8px; padding: 24px; text-align: center; margin-bottom: 24px; cursor: pointer; }
+    .load-zone:hover { border-color: #0066cc; background: #f8fbff; }
+    .load-zone input { display: none; }
+    .load-zone p { margin: 0; color: #666; }
+    .board { display: flex; gap: 24px; flex-wrap: wrap; }
+    .column { flex: 1; min-width: 280px; background: #fff; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+    .column h2 { font-size: 0.9rem; margin: 0 0 12px 0; padding-bottom: 8px; border-bottom: 2px solid; }
+    .column.en_prod h2 { color: #0a6; border-color: #0a6; }
+    .column.pas_en_prod h2 { color: #f90; border-color: #f90; }
+    .column.a_supprimer h2 { color: #c33; border-color: #c33; }
+    .column.journey h2 { color: #333; border-color: #666; }
+    .badge { font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; margin-left: 6px; font-weight: normal; }
+    .badge-ok { background: #d4edda; color: #155724; }
+    .badge-pending { background: #fff3cd; color: #856404; }
+    .badge-del { background: #f8d7da; color: #721c24; }
+    .card { background: #fafafa; border-radius: 6px; padding: 12px; margin-bottom: 10px; font-size: 0.85rem; border-left: 4px solid #ddd; }
+    .card.en_prod { border-left-color: #0a6; }
+    .card.pas_en_prod { border-left-color: #f90; }
+    .card.a_supprimer { border-left-color: #c33; }
+    .card .key { font-weight: 600; color: #333; margin-bottom: 4px; word-break: break-word; }
+    .card .sujet { color: #555; margin-bottom: 4px; font-size: 0.8rem; }
+    .card .trigger { color: #666; font-size: 0.75rem; margin-bottom: 4px; }
+    .card .meta { display: flex; gap: 12px; font-size: 0.7rem; color: #888; }
+    .card .categorie { background: #e0e0e0; padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; }
+    .stats { display: flex; gap: 16px; margin-bottom: 16px; font-size: 0.9rem; }
+    .stats span { background: #fff; padding: 6px 12px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <h1>Emails & Push côté créateur</h1>
+  <div class="load-zone" id="loadZone">
+    <input type="file" id="fileInput" accept=".csv">
+    <p>Glisse le fichier CSV ici ou clique pour le sélectionner</p>
+    <p style="font-size: 0.8rem; margin-top: 8px; margin-bottom: 16px;">Fichier source : notifications-creator.csv</p>
+    <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 12px;">
+      <input type="url" id="urlInput" placeholder="URL Google Sheets (CSV publié)" style="padding: 8px 12px; width: 320px; max-width: 100%; border: 1px solid #ccc; border-radius: 6px; font-size: 0.85rem;">
+      <button id="loadUrlBtn" style="padding: 8px 16px; background: #0066cc; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">Charger depuis l'URL</button>
+    </div>
+    <p style="font-size: 0.75rem; margin-top: 8px; color: #888;">Sheets : Fichier → Partager → Publier sur le web → CSV → copier l’URL</p>
+  </div>
+  <div id="toolbar" style="display: none; margin-bottom: 16px; gap: 8px; align-items: center; flex-wrap: wrap;">
+    <span style="font-size: 0.9rem;">Vue :</span>
+    <button id="viewParcours" style="padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">Parcours créateur</button>
+    <button id="viewStatut" style="padding: 6px 12px; background: #e8e8e8; border: 1px solid #ccc; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">Par statut</button>
+    <button id="refreshBtn" style="padding: 6px 12px; margin-left: 16px; border: 1px solid #ccc; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">Actualiser</button>
+  </div>
+  <div id="board" class="board" style="display: none;"></div>
+
+  <script>
+    const loadZone = document.getElementById('loadZone');
+    const fileInput = document.getElementById('fileInput');
+    const board = document.getElementById('board');
+
+    function parseCSVLine(line) {
+      const out = [];
+      let cur = '', inQ = false;
+      for (let i = 0; i < line.length; i++) {
+        const c = line[i];
+        if (c === '"') inQ = !inQ;
+        else if (c === ',' && !inQ) { out.push(cur.replace(/^"|"$/g, '')); cur = ''; }
+        else cur += c;
+      }
+      out.push(cur.replace(/^"|"$/g, ''));
+      return out;
+    }
+    function parseCSV(text) {
+      const lines = text.trim().split(/\r?\n/).filter(l => l);
+      if (lines.length < 2) return [];
+      const headers = parseCSVLine(lines[0]).map(h => h.trim());
+      return lines.slice(1).map(line => {
+        const vals = parseCSVLine(line);
+        const row = {};
+        headers.forEach((h, i) => row[h] = (vals[i] || '').trim());
+        return row;
+      });
+    }
+
+    const JOURNEY_ORDER = ['signup','connexion','campagne','candidature','expedition','review','rappels','review_expiree','reengagement','communication','moderation','recompenses','archive'];
+    const JOURNEY_LABELS = { signup:'1. Signup', connexion:'2. Connexion sociale', campagne:'3. Nouvelle campagne', candidature:'4. Candidature', expedition:'5. Expédition', review:'6. Review', rappels:'7. Rappels', review_expiree:'8. Review expirée/supprimée', reengagement:'9. Re-engagement', communication:'10. Communication', moderation:'11. Modération', recompenses:'12. Récompenses', archive:'13. Archivé (à supprimer)' };
+
+    function renderCard(r, col) {
+      const statut = (r.statut || 'en_prod').trim().toLowerCase();
+      const card = document.createElement('div');
+      card.className = 'card ' + statut;
+      const statutBadge = statut === 'en_prod' ? '<span class="badge badge-ok">En prod</span>' : statut === 'pas_en_prod' ? '<span class="badge badge-pending">Pas en prod</span>' : '<span class="badge badge-del">À supprimer</span>';
+      card.innerHTML =
+        '<div class="key">' + (r.key || '-') + ' ' + statutBadge + '</div>' +
+        (r.sujet && r.sujet !== '-' ? '<div class="sujet">' + r.sujet + '</div>' : '') +
+        (r.trigger && r.trigger !== '-' ? '<div class="trigger">' + r.trigger + '</div>' : '') +
+        '<div class="meta">' +
+        (r.volume && r.volume !== '0' && r.volume !== '-' ? ' Volume: ' + r.volume : '') +
+        (r.push && r.push !== '?' && r.push !== '-' ? ' | Push: ' + r.push : '') + '</div>';
+      col.appendChild(card);
+    }
+
+    function render(rows) {
+      window._lastRows = rows;
+      const viewMode = localStorage.getItem('notif-view') || 'parcours';
+      document.getElementById('toolbar').style.display = 'flex';
+      document.getElementById('viewParcours').style.background = viewMode === 'parcours' ? '#0066cc' : '#e8e8e8';
+      document.getElementById('viewParcours').style.color = viewMode === 'parcours' ? '#fff' : '#333';
+      document.getElementById('viewStatut').style.background = viewMode === 'statut' ? '#0066cc' : '#e8e8e8';
+      document.getElementById('viewStatut').style.color = viewMode === 'statut' ? '#fff' : '#333';
+
+      board.innerHTML = '';
+      board.style.display = 'flex';
+
+      if (viewMode === 'parcours') {
+        const byEtape = {};
+        rows.forEach(r => {
+          const e = (r.etape || 'archive').trim().toLowerCase();
+          if (!byEtape[e]) byEtape[e] = [];
+          byEtape[e].push(r);
+        });
+        JOURNEY_ORDER.forEach(etape => {
+          const items = byEtape[etape] || [];
+          if (items.length === 0 && etape !== 'archive') return;
+          const col = document.createElement('div');
+          col.className = 'column journey';
+          col.innerHTML = '<h2>' + (JOURNEY_LABELS[etape] || etape) + ' (' + items.length + ')</h2>';
+          items.forEach(r => renderCard(r, col));
+          board.appendChild(col);
+        });
+      } else {
+        const byStatut = { en_prod: [], pas_en_prod: [], a_supprimer: [] };
+        rows.forEach(r => {
+          const s = (r.statut || 'en_prod').trim().toLowerCase();
+          if (byStatut[s]) byStatut[s].push(r);
+          else byStatut.en_prod.push(r);
+        });
+        const labels = { en_prod: '✅ En prod', pas_en_prod: '⏳ Pas en prod', a_supprimer: '❌ À supprimer' };
+        ['en_prod', 'pas_en_prod', 'a_supprimer'].forEach(statut => {
+          const items = byStatut[statut] || [];
+          if (items.length === 0) return;
+          const col = document.createElement('div');
+          col.className = 'column ' + statut;
+          col.innerHTML = '<h2>' + labels[statut] + ' (' + items.length + ')</h2>';
+          items.forEach(r => renderCard(r, col));
+          board.appendChild(col);
+        });
+      }
+    }
+
+    function setView(mode) {
+      localStorage.setItem('notif-view', mode);
+      if (window._lastRows) render(window._lastRows);
+    }
+
+    function handleFile(file) {
+      const r = new FileReader();
+      r.onload = () => { render(parseCSV(r.result)); loadZone.style.display = 'none'; };
+      r.readAsText(file, 'UTF-8');
+    }
+
+    const urlInput = document.getElementById('urlInput');
+    const loadUrlBtn = document.getElementById('loadUrlBtn');
+    if (localStorage.getItem('notif-csv-url')) urlInput.value = localStorage.getItem('notif-csv-url');
+
+    async function loadFromUrl(url) {
+      if (!url.trim()) return;
+      try {
+        const r = await fetch(url);
+        const text = await r.text();
+        render(parseCSV(text));
+        loadZone.style.display = 'none';
+        localStorage.setItem('notif-csv-url', url);
+      } catch (e) {
+        alert('Erreur : impossible de charger l\'URL. Si le fichier HTML est ouvert en local (file://), essaie le glisser-déposer du CSV à la place.');
+      }
+    }
+
+    document.getElementById('viewParcours').addEventListener('click', () => setView('parcours'));
+    document.getElementById('viewStatut').addEventListener('click', () => setView('statut'));
+    document.getElementById('refreshBtn').addEventListener('click', () => {
+      fetch('./notifications-creator.csv').then(r => r.text()).then(text => { if (text) render(parseCSV(text)); }).catch(() => {});
+    });
+
+    loadUrlBtn.addEventListener('click', () => loadFromUrl(urlInput.value));
+    urlInput.addEventListener('keydown', e => { if (e.key === 'Enter') loadFromUrl(urlInput.value); });
+
+    loadZone.addEventListener('click', (e) => { if (!e.target.closest('#urlInput') && !e.target.closest('#loadUrlBtn')) fileInput.click(); });
+    loadZone.addEventListener('dragover', e => { e.preventDefault(); loadZone.style.borderColor = '#0066cc'; });
+    loadZone.addEventListener('dragleave', () => { loadZone.style.borderColor = ''; });
+    loadZone.addEventListener('drop', e => { e.preventDefault(); loadZone.style.borderColor = ''; if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]); });
+    fileInput.addEventListener('change', () => { if (fileInput.files.length) handleFile(fileInput.files[0]); });
+
+    // Auto-load CSV from same directory when served over http (e.g. GitHub Pages)
+    fetch('./notifications-creator.csv').then(r => r.text()).then(text => {
+      if (text && text.trim().length > 10) { render(parseCSV(text)); loadZone.style.display = 'none'; }
+    }).catch(() => {});
+  </script>
+</body>
+</html>

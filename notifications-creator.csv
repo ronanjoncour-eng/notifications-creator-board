@@ -1,0 +1,87 @@
+key,categorie,sujet,trigger,volume,push,statut,etape
+one_review_deleted,Order,"Your additional review has been deleted!",Review supprimée (report brand),120,?,en_prod,review_expiree
+new_personalized_affiliate_link,Order,Your exclusive affiliate link inside!,Lien affiliate envoyé par la marque,163,?,en_prod,communication
+last_review_deleted,Order,"Modify Your Review, Pretty Please!",1ère review supprimée (report brand),200,?,en_prod,review_expiree
+approved_after_pending,Order,We successfully fixed your shipping issue!,Problème livraison résolu,277,?,en_prod,expedition
+review_ftc_status_failed,Order,Almost there! Your review need some adjustment,Contrôle FTC échoué,300,?,en_prod,review
+social review_not_reposted_for_creator,Order,It's been 5 days...,Review non repostée sous 5j,450,?,en_prod,review_expiree
+review_ftc_status_success,Order,Your review has been accepted!,Contrôle FTC OK,629,?,en_prod,review
+one_review_removed_for_creator,Order,Your additional review has been deleted!,Review retirée avant 30j,642,?,en_prod,review_expiree
+reviewed,Order,Your campaign is complete!,Toutes les reviews faites,695,?,en_prod,review
+last_review_removed_for_creator,Order,Where'd your review go?,Dernière review retirée avant 30j,1300,?,en_prod,review_expiree
+campaign_reviewable_for_creator,Order,Review publication opening,Campagne ouverte pour review,1650,?,en_prod,campagne
+new_promo_code,Order,"Sharing is caring. Ton code promo...",Code promo envoyé par la marque,3700,?,en_prod,communication
+reminder_two_for_creator_consumer,Order,[Brand] Is Dying To See Your Review!,Rappel J-1 (Consumer),23700,Oui,en_prod,rappels
+expired_for_creator,Order,Your credit expired but don't worry...,Commande expirée,27800,?,en_prod,review_expiree
+reminder_five_for_creator_consumer,Order,Time's almost up! 3 days left...,Rappel J-3 (Consumer),42000,Oui,en_prod,rappels
+reminder_one_for_creator_consumer,Order,How's That Review Coming Along?,Rappel J-7 (Consumer),67800,Oui,en_prod,rappels
+reminder_two_for_creator,Order,[Brand] Is Dying To See Your Review!,Rappel J-1 (Social),52200,Oui,en_prod,rappels
+reminder_one_for_creator,Order,How's That Review Coming Along?,Rappel J-10/J-14 (Social),94200,Oui,en_prod,rappels
+review_created,Order,Your Review Is 🔥,Review publiée,143800,?,en_prod,review
+approved (Social),Order,"Get. Excited. Your Product(s) Are On The Way!",Commande acceptée (social),144600,?,en_prod,candidature
+approved_for_creator_consumer,Order,Yay! Your product order is confirmed!,Commande acceptée (consumer),174300,?,en_prod,candidature
+declined (order social),Order,Can We Interest You In Something Else?,Commande refusée par la marque,177600,?,en_prod,candidature
+review_created_consumer,Order,We love your review!,Review publiée (consumer),224200,?,en_prod,review
+shipped (view_created),Order,"Ship, Ship... Hooray!",Produit expédié,325500,?,en_prod,expedition
+canceled_before_ship_no_response_from_store,Order,DKNY didn't answer to your request,Marque n'a pas répondu,116400,?,en_prod,expedition
+canceled_before_ship_out_of_stock,Order,Can We Interest You In Something Else?,Rupture de stock,354100,?,en_prod,expedition
+canceled_after_pending,Order,"We Hate To Break This To You...",Problème livraison annulé,9200,?,en_prod,expedition
+confirm_youtube_account_reminder,Onboarding,Confirm your YouTube account...,YouTube non confirmé,1250,?,en_prod,connexion
+platform_account_refused_awaiting_content_check,Onboarding,Your social account didn't pass Content check,Échec content check,1850,?,en_prod,connexion
+platform_account_refused_awaiting_quality_check,Onboarding,didn't pass Skeepers Quality Check,Échec quality check,5400,?,en_prod,connexion
+email_confirmation_reminder,Onboarding,You're almost done! Finish your Skeepers Sign Up!,Email non confirmé,6000,?,en_prod,signup
+platform_account_refused_awaiting_quantity_check,Onboarding,We reviewed your account... Quantity Check,Échec quantity check,35700,?,en_prod,connexion
+platform_account_refused_awaiting_manual_check,Onboarding,didn't pass Editorial Check,Échec editorial check,37200,?,en_prod,connexion
+platform_account_refused_awaiting_basic_check,Onboarding,didn't pass Basic Check,Échec basic eligibility,43900,?,en_prod,connexion
+platform_account_enabled,Onboarding,Congratulations! You can now participate...,Compte validé,15400,?,en_prod,connexion
+add_social_account_reminder,Onboarding,OMG! There Are 300+ Brands Waiting...,Ajouter compte social,62800,?,en_prod,connexion
+email_confirmed,Onboarding,OMG! 300+ Brands are Waiting...,Email confirmé,135500,?,en_prod,signup
+creators:confirmation_instructions,Onboarding,You're Almost There! Confirm Email,Confirmation signup,161900,?,en_prod,signup
+too_many_flags_for_creator,Moderation,Your review has been deleted...,2e review flaggée,240,?,en_prod,moderation
+too_many_expired_orders,Moderation,Your account has been disabled,4+ crédits expirés,3600,?,en_prod,moderation
+platform_account_disabled,Moderation,Your account on Skeepers,Compte plus éligible,50800,?,en_prod,moderation
+diploma:threshold_reached,Retention,Congratulations on reaching [X] followers!,Seuil followers (10k–200k),2000,?,en_prod,recompenses
+no_order_since_review,Retention,More FREE Stuff Awaits!,Pas de nouvelle commande après review,48200,?,en_prod,reengagement
+no_order_since_declined,Retention,"Hey, It Happens! Keep hope",Pas de commande depuis refus,97600,?,en_prod,reengagement
+w_c,Retention,Quick question! Hey… where are you?,Win-back 15j inactif,69800,?,en_prod,reengagement
+campaigns_digest,Retention,Check out these campaigns in your Free Store!,Digest hebdo lundi 19h EU,755800,?,en_prod,campagne
+reset_password_instructions,Account,Skeepers - Reset password instructions,Demande reset mot de passe,21200,?,en_prod,signup
+creators:reconfirmation_instructions,Account,You're Almost There! Confirm your new Email,Confirmation changement email,25000,?,en_prod,signup
+entity_not_accessible,Account,We can't see you! Where are you?,Compte supprimé ou privé,60400,?,en_prod,connexion
+new_message_from_store,Communication,[Brand] has just sent you a personal message,Nouveau message de la marque,131000,?,en_prod,communication
+Invitation (brand),Order,Invitation marque après lancement campagne,Released april 2025,0,?,pas_en_prod,campagne
+Invitation on matching rate,Order,User >80% matching 1x/jour,Released sept 2025,0,?,pas_en_prod,campagne
+order:reminder_review_guidance,Order,Rappel brief 2j après expédition,Contenu à définir,0,?,pas_en_prod,rappels
+Brand loved your review,Order,Retour brand sur la review,Contenu à définir,0,?,pas_en_prod,review
+after_30_inactive_days,-,-,-,0,-,a_supprimer,archive
+confirm_instagram_account_reminder,-,-,-,0,-,a_supprimer,archive
+confirm_tiktok_account_reminder,-,-,-,0,-,a_supprimer,archive
+create_password,-,-,-,0,-,a_supprimer,archive
+email_confirmation,-,-,-,0,-,a_supprimer,archive
+events:before_reminder,-,-,-,0,-,a_supprimer,archive
+events:first_review_reminder,-,-,-,0,-,a_supprimer,archive
+events:request:approved,-,-,-,0,-,a_supprimer,archive
+events:request:declined,-,-,-,0,-,a_supprimer,archive
+events:second_review_reminder,-,-,-,0,-,a_supprimer,archive
+late_for_creator,-,-,-,0,-,a_supprimer,archive
+licensing_request_expired,-,-,-,0,-,a_supprimer,archive
+licensing_request_reminder,-,-,-,0,-,a_supprimer,archive
+new_approved_licensing_request,-,-,-,0,-,a_supprimer,archive
+new_licensing_request,-,-,-,0,-,a_supprimer,archive
+octopoints_from_godson,-,-,-,0,-,a_supprimer,archive
+octopoints_withdrawal_request_received,-,-,-,0,-,a_supprimer,archive
+platform_account_refused,-,-,-,0,-,a_supprimer,archive
+platform_account_waiting,-,-,-,0,-,a_supprimer,archive
+refer_a_friend,-,-,-,0,-,a_supprimer,archive
+reminder_for_creator,-,-,-,0,-,a_supprimer,archive
+warning_for_creator,-,-,-,0,-,a_supprimer,archive
+welcome,-,-,-,0,-,a_supprimer,archive
+store:licensing_request_approved,-,-,-,0,-,a_supprimer,archive
+store:licensing_request_declined,-,-,-,0,-,a_supprimer,archive
+store:licensing_request_expired,-,-,-,0,-,a_supprimer,archive
+store:reset_password_instructions,-,-,-,0,-,a_supprimer,archive
+user_reset_password_instructions,-,-,-,0,-,a_supprimer,archive
+waiting_email_confirmation,-,-,-,0,-,a_supprimer,archive
+waiting_platform_account_refused,-,-,-,0,-,a_supprimer,archive
+waiting_signup_confirmation,-,-,-,0,-,a_supprimer,archive
+waiting_unfinished_registration_reminder,-,-,-,0,-,a_supprimer,archive
