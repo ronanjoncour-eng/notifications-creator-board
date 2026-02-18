@@ -3,56 +3,70 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Emails & Push créateur – Board</title>
+  <title>Notifications créateur – Board</title>
   <style>
     * { box-sizing: border-box; }
-    body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 16px; background: #f5f5f5; }
-    h1 { font-size: 1.25rem; margin: 0 0 8px 0; }
-    .load-zone { background: #fff; border: 2px dashed #ccc; border-radius: 8px; padding: 24px; text-align: center; margin-bottom: 24px; cursor: pointer; }
-    .load-zone:hover { border-color: #0066cc; background: #f8fbff; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; margin: 0; padding: 24px; background: #e8ecf0; color: #1a1a1a; line-height: 1.4; }
+    .page-header { background: #fff; border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+    .page-header h1 { font-size: 1.5rem; font-weight: 700; margin: 0 0 4px 0; color: #111; }
+    .page-header .subtitle { font-size: 0.9rem; color: #555; margin: 0; }
+    .load-zone { background: #fff; border: 2px dashed #b0b8c4; border-radius: 12px; padding: 32px 24px; text-align: center; margin-bottom: 24px; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+    .load-zone:hover { border-color: #0066cc; background: #f5f9ff; }
     .load-zone input { display: none; }
-    .load-zone p { margin: 0; color: #666; }
-    .board { display: flex; gap: 24px; flex-wrap: wrap; }
-    .column { flex: 1; min-width: 280px; background: #fff; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
-    .column h2 { font-size: 0.9rem; margin: 0 0 12px 0; padding-bottom: 8px; border-bottom: 2px solid; }
-    .column.en_prod h2 { color: #0a6; border-color: #0a6; }
-    .column.pas_en_prod h2 { color: #f90; border-color: #f90; }
-    .column.a_supprimer h2 { color: #c33; border-color: #c33; }
+    .load-zone p { margin: 0; color: #555; font-size: 0.95rem; }
+    .toolbar-wrap { background: #fff; border-radius: 12px; padding: 14px 20px; margin-bottom: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+    #toolbar { gap: 10px; align-items: center; flex-wrap: wrap; }
+    #toolbar button { padding: 8px 16px; border-radius: 8px; font-size: 0.9rem; cursor: pointer; font-weight: 500; border: 1px solid #ccc; background: #f0f0f0; color: #333; }
+    #toolbar button:hover { background: #e5e5e5; }
+    #toolbar button.active { background: #0066cc; color: #fff; border-color: #0066cc; }
+    #toolbar #refreshBtn { margin-left: 20px; }
+    .board { display: flex; gap: 20px; flex-wrap: wrap; }
+    .column { flex: 1; min-width: 300px; max-width: 380px; background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+    .column h2 { font-size: 1rem; font-weight: 600; margin: 0 0 16px 0; padding-bottom: 10px; border-bottom: 3px solid; }
+    .column.en_prod h2 { color: #0d6b0d; border-color: #0d6b0d; }
+    .column.pas_en_prod h2 { color: #b35f00; border-color: #b35f00; }
+    .column.a_supprimer h2 { color: #b91c1c; border-color: #b91c1c; }
     .column.journey h2 { color: #333; border-color: #666; }
-    .badge { font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; margin-left: 6px; font-weight: normal; }
-    .badge-ok { background: #d4edda; color: #155724; }
-    .badge-pending { background: #fff3cd; color: #856404; }
-    .badge-del { background: #f8d7da; color: #721c24; }
-    .card { background: #fafafa; border-radius: 6px; padding: 12px; margin-bottom: 10px; font-size: 0.85rem; border-left: 4px solid #ddd; }
-    .card.en_prod { border-left-color: #0a6; }
-    .card.pas_en_prod { border-left-color: #f90; }
-    .card.a_supprimer { border-left-color: #c33; }
-    .card .key { font-weight: 600; color: #333; margin-bottom: 4px; word-break: break-word; }
-    .card .sujet { color: #555; margin-bottom: 4px; font-size: 0.8rem; }
-    .card .trigger { color: #666; font-size: 0.75rem; margin-bottom: 4px; }
-    .card .meta { display: flex; gap: 12px; font-size: 0.7rem; color: #888; }
-    .card .categorie { background: #e0e0e0; padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; }
-    .stats { display: flex; gap: 16px; margin-bottom: 16px; font-size: 0.9rem; }
-    .stats span { background: #fff; padding: 6px 12px; border-radius: 6px; }
+    .badge { font-size: 0.7rem; padding: 3px 8px; border-radius: 6px; margin-left: 8px; font-weight: 600; }
+    .badge-ok { background: #dcfce7; color: #166534; }
+    .badge-pending { background: #fef3c7; color: #92400e; }
+    .badge-del { background: #fee2e2; color: #991b1b; }
+    .card { background: #f8f9fa; border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; font-size: 0.9rem; border-left: 4px solid #dee2e6; transition: background .15s; }
+    .card:hover { background: #eef0f2; }
+    .card.en_prod { border-left-color: #0d6b0d; }
+    .card.pas_en_prod { border-left-color: #b35f00; }
+    .card.a_supprimer { border-left-color: #b91c1c; }
+    .card .key { font-weight: 600; color: #1a1a1a; margin-bottom: 6px; word-break: break-word; font-size: 0.85rem; }
+    .card .sujet { color: #374151; margin-bottom: 6px; font-size: 0.85rem; line-height: 1.35; }
+    .card .trigger { color: #6b7280; font-size: 0.8rem; margin-bottom: 6px; }
+    .card .meta { font-size: 0.78rem; color: #9ca3af; margin-top: 8px; }
+    .summary { font-size: 0.85rem; color: #555; margin: 0 0 16px 0; }
   </style>
 </head>
 <body>
-  <h1>Emails & Push côté créateur</h1>
+  <div class="page-header">
+    <h1>Notifications créateur</h1>
+    <p class="subtitle">Vue board des emails et push envoyés aux créateurs</p>
+  </div>
   <div class="load-zone" id="loadZone">
     <input type="file" id="fileInput" accept=".csv">
-    <p>Glisse le fichier CSV ici ou clique pour le sélectionner</p>
-    <p style="font-size: 0.8rem; margin-top: 8px; margin-bottom: 16px;">Fichier source : notifications-creator.csv</p>
+    <p><strong>Chargement des données…</strong></p>
+    <p style="font-size: 0.9rem; margin-top: 12px;">Si la vue ne s’affiche pas : glisse le fichier <strong>notifications-creator.csv</strong> ici (ou clique pour le sélectionner).</p>
+    <p style="font-size: 0.8rem; margin-top: 8px; margin-bottom: 16px; color: #888;">Assure-toi d’ouvrir l’URL du fichier <strong>.html</strong>, pas du .csv.</p>
     <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 12px;">
       <input type="url" id="urlInput" placeholder="URL Google Sheets (CSV publié)" style="padding: 8px 12px; width: 320px; max-width: 100%; border: 1px solid #ccc; border-radius: 6px; font-size: 0.85rem;">
       <button id="loadUrlBtn" style="padding: 8px 16px; background: #0066cc; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">Charger depuis l'URL</button>
     </div>
     <p style="font-size: 0.75rem; margin-top: 8px; color: #888;">Sheets : Fichier → Partager → Publier sur le web → CSV → copier l’URL</p>
   </div>
-  <div id="toolbar" style="display: none; margin-bottom: 16px; gap: 8px; align-items: center; flex-wrap: wrap;">
-    <span style="font-size: 0.9rem;">Vue :</span>
-    <button id="viewParcours" style="padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">Parcours créateur</button>
-    <button id="viewStatut" style="padding: 6px 12px; background: #e8e8e8; border: 1px solid #ccc; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">Par statut</button>
-    <button id="refreshBtn" style="padding: 6px 12px; margin-left: 16px; border: 1px solid #ccc; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">Actualiser</button>
+  <div id="toolbarWrap" class="toolbar-wrap" style="display: none;">
+    <p id="summary" class="summary"></p>
+    <div id="toolbar" style="display: flex;">
+      <span style="font-size: 0.9rem; margin-right: 8px;">Vue :</span>
+      <button id="viewParcours" type="button">Parcours créateur</button>
+      <button id="viewStatut" type="button">Par statut</button>
+      <button id="refreshBtn" type="button">Actualiser</button>
+    </div>
   </div>
   <div id="board" class="board" style="display: none;"></div>
 
@@ -88,29 +102,36 @@
     const JOURNEY_ORDER = ['signup','connexion','campagne','candidature','expedition','review','rappels','review_expiree','reengagement','communication','moderation','recompenses','archive'];
     const JOURNEY_LABELS = { signup:'1. Signup', connexion:'2. Connexion sociale', campagne:'3. Nouvelle campagne', candidature:'4. Candidature', expedition:'5. Expédition', review:'6. Review', rappels:'7. Rappels', review_expiree:'8. Review expirée/supprimée', reengagement:'9. Re-engagement', communication:'10. Communication', moderation:'11. Modération', recompenses:'12. Récompenses', archive:'13. Archivé (à supprimer)' };
 
+    function esc(s) {
+      if (!s) return '';
+      const div = document.createElement('div');
+      div.textContent = s;
+      return div.innerHTML;
+    }
     function renderCard(r, col) {
       const statut = (r.statut || 'en_prod').trim().toLowerCase();
       const card = document.createElement('div');
       card.className = 'card ' + statut;
       const statutBadge = statut === 'en_prod' ? '<span class="badge badge-ok">En prod</span>' : statut === 'pas_en_prod' ? '<span class="badge badge-pending">Pas en prod</span>' : '<span class="badge badge-del">À supprimer</span>';
       card.innerHTML =
-        '<div class="key">' + (r.key || '-') + ' ' + statutBadge + '</div>' +
-        (r.sujet && r.sujet !== '-' ? '<div class="sujet">' + r.sujet + '</div>' : '') +
-        (r.trigger && r.trigger !== '-' ? '<div class="trigger">' + r.trigger + '</div>' : '') +
+        '<div class="key">' + esc(r.key || '-') + ' ' + statutBadge + '</div>' +
+        (r.sujet && r.sujet !== '-' ? '<div class="sujet">' + esc(r.sujet) + '</div>' : '') +
+        (r.trigger && r.trigger !== '-' ? '<div class="trigger">' + esc(r.trigger) + '</div>' : '') +
         '<div class="meta">' +
-        (r.volume && r.volume !== '0' && r.volume !== '-' ? ' Volume: ' + r.volume : '') +
-        (r.push && r.push !== '?' && r.push !== '-' ? ' | Push: ' + r.push : '') + '</div>';
+        (r.volume && r.volume !== '0' && r.volume !== '-' ? 'Volume: ' + esc(r.volume) : '') +
+        (r.push && r.push !== '?' && r.push !== '-' ? ' · Push: ' + esc(r.push) : '') + '</div>';
       col.appendChild(card);
     }
 
     function render(rows) {
       window._lastRows = rows;
       const viewMode = localStorage.getItem('notif-view') || 'parcours';
-      document.getElementById('toolbar').style.display = 'flex';
-      document.getElementById('viewParcours').style.background = viewMode === 'parcours' ? '#0066cc' : '#e8e8e8';
-      document.getElementById('viewParcours').style.color = viewMode === 'parcours' ? '#fff' : '#333';
-      document.getElementById('viewStatut').style.background = viewMode === 'statut' ? '#0066cc' : '#e8e8e8';
-      document.getElementById('viewStatut').style.color = viewMode === 'statut' ? '#fff' : '#333';
+      document.getElementById('toolbarWrap').style.display = 'block';
+      var enProd = rows.filter(function(r) { return (r.statut || '').toLowerCase() === 'en_prod'; }).length;
+      var aSuppr = rows.filter(function(r) { return (r.statut || '').toLowerCase() === 'a_supprimer'; }).length;
+      document.getElementById('summary').textContent = rows.length + ' templates au total · ' + enProd + ' en prod · ' + aSuppr + ' à supprimer';
+      document.getElementById('viewParcours').classList.toggle('active', viewMode === 'parcours');
+      document.getElementById('viewStatut').classList.toggle('active', viewMode === 'statut');
 
       board.innerHTML = '';
       board.style.display = 'flex';
